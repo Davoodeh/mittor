@@ -1,0 +1,74 @@
+#+title: Mittor: MQTT Mirroring Tool and Echo Server
+
+This simple tool is a rewrite of a shell script of mine which redirects MQTT
+requests to email, log files, other MQTT servers or alternatively makes HTTP
+requests to a server upon each incoming message. The script is no longer
+maintained for the limitations in Mosquitto and its issue regarding secure
+ports. Basically, developers using my script could not listen and echo their
+tools when using port 8883 with unsecure MQTT simply because Mosquitto did not
+support this feature.
+
+This simple rewrite has two important features which the original script lacked:
+1. 8883 port can be unsecure.
+2. messages can be multiline.
+
+However, other features like redirecting to HTTP, email, log file and mutliple
+MQTT version/QoS are missing.
+
+Since this is an internal tool used for some IoT developers to mirror and echo
+their MQTT requests, I do not plan to actively edit and add features to this
+codebase unless requests. Although, it is a pretty neat little project that
+could prove useful per special case.
+
+* Help
+#+begin_src text
+Echo or mirror select topics of an MQTT server to the given redirect hosts
+
+Usage: mittor [OPTIONS] --topics <TOPICS> <SOURCE_HOST>
+
+Arguments:
+  <SOURCE_HOST>
+          the upstream server to mirror from
+          (e.g. `localhost` or `tcp://localhost:1883`, `user:pass@localhost`)
+
+Options:
+  -r, --redirect-host <REDIRECT_HOST>
+          addresses of hosts to redirect to
+          (e.g. `localhost` or `tcp://localhost:1883`, `user:pass@localhost`)
+
+  -t, --topics <TOPICS>
+          the topics to listen to
+
+  -q, --qos <QOS>
+          the QoS for each topic, ordered
+          (the count must be the same as topics' otherwise uses default)
+
+          [default: 0 for all the topics]
+
+  -c, --client <CLIENT>
+          client ID of mirrors sending requests to the redirect hosts
+
+          [default: MetalLeech]
+
+  -h, --help
+          Print help information (use `-h` for a summary)
+#+end_src
+
+** Example
+#+begin_src sh
+# Redirect localhost:1883/test and /test2 to logserver.dev:1883
+# "tcp://" is optional
+mittor tcp://localhost:1883 -r logserver.dev:1883                          \
+    -t test -t test2                                                       \
+    -q 0    -q 0                                                           \
+    -c test-client
+#+end_src
+
+#+begin_src sh
+# Redirect localhost:1883/test and /test2 to logserver.dev:1883
+# assuming the server uses password
+mittor tcp://user:pass@localhost:1883 -r logserver.dev:1883                \
+    -t test -t test2                                                       \
+    -q 0    -q 0                                                           \
+    -c test-client
+#+end_src

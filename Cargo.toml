@@ -1,0 +1,19 @@
+[package]
+name = "mittor"
+description = "MQTT Mirroring Tool and Echo Server"
+version = "0.1.0"
+authors = ["M. Yas. Davoodeh <MYDavoodeh@gmail.com>"]
+edition = "2021"
+rust-version = "1.64"
+repository = "https://github.com/Davoodeh/mittor"
+license-file = "LICENSE"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+paho-mqtt = "0.11"
+tokio = { version = "1.21", features=["full"] }
+futures-util = "0.3"
+
+clap = { version = "4", features = ["derive"] }
+http-types = "2"
